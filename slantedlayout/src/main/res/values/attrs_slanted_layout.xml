@@ -5,5 +5,14 @@
             <enum name="vertical" value="0" />
             <enum name="horizontal" value="1" />
         </attr>
+
+        <attr name="slant_ignore">
+            <flag name="none" value="0"/>
+            <flag name="top" value="1"/>
+            <flag name="left" value="2"/>
+            <flag name="right" value="4"/>
+            <flag name="bottom" value="8"/>
+            <flag name="all" value="15"/>
+        </attr>
     </declare-styleable>
 </resources>
