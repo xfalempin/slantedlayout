@@ -1,0 +1,9 @@
+<resources>
+    <declare-styleable name="SlantedLayout">
+        <attr name="slant_size" format="dimension" />
+        <attr name="slant_direction" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

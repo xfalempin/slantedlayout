@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ocito.slantedlayoutapp.MainActivity">
+
+
+    <com.ocito.slantedlayout.SlantedLayout
+        android:id="@+id/slant"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="30dp"
+        app:slant_size="-70dp"
+        app:slant_direction="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FF0"
+            android:text="LOLOLOLOLOLOL"
+            android:textSize="90sp" />
+    </com.ocito.slantedlayout.SlantedLayout>
+
+    <Space
+        android:id="@+id/spacer"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/slant" />
+
+    <com.ocito.slantedlayout.SlantedLayout
+        android:id="@+id/slant2"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="30dp"
+        app:layout_constraintTop_toTopOf="@id/spacer"
+        app:slant_size="70dp"
+        app:slant_direction="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FF0"
+            android:text="HIHIHIHIHIHIHI"
+            android:textSize="90sp" />
+    </com.ocito.slantedlayout.SlantedLayout>
+
+
+</android.support.constraint.ConstraintLayout>
