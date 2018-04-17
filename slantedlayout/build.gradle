@@ -1,5 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+
+
+
+def libraryGroupId = 'com.ocito.android'
+def libraryArtifactId = 'slantedlayout'
+def libraryVersion = '0.1'
+
+
 
 android {
     compileSdkVersion 27
@@ -10,7 +21,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName libraryVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -39,3 +50,43 @@ repositories {
 }
 
 apply plugin: 'kotlin-android-extensions'
+
+
+
+//TODO : faire en sorte de pouvoir tout build et publier en une seule task
+//Process actuel : executer dans l'ordre :
+//Mettre à jour le numéro de version (attention sinon on écrase les anciens builds)
+// assembleRelease
+// generatePomFile pour chaque target
+// artifactoryPublish
+
+artifactory {
+    contextUrl = 'http://172.17.205.92:8081/artifactory/'
+    publish {
+        repository {
+            repoKey = 'libs-release'
+
+            username = artifactory_username
+            password = artifactory_password
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+
+            properties = ['qa.level': 'basic', 'q.os': 'android', 'dev.team': 'core']
+            publishPom = true
+        }
+    }
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId libraryGroupId
+            version libraryVersion
+            artifactId "${libraryArtifactId}"
+
+            artifact("$buildDir/outputs/aar/${artifactId}-release.aar")
+        }
+    }
+}
