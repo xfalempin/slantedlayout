@@ -4,10 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ocito.slantedlayout.SlantedLayout
+import com.ocito.slantedlayout.SlantedAdapter
 
-class MyAdapter(val items: List<Item>, val listener: (Item) -> Unit = {}) : RecyclerView.Adapter<MyViewHolder>() {
-
+class MyAdapter(val items: List<Item>, val listener: (Item) -> Unit = {}) : SlantedAdapter<MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         var view: View = LayoutInflater.from(parent?.context).inflate(R.layout.item, parent, false)
@@ -19,25 +18,8 @@ class MyAdapter(val items: List<Item>, val listener: (Item) -> Unit = {}) : Recy
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
-        val slanted = (holder.itemView as SlantedLayout?)
-        slanted?.let {
-            if(position == 0)
-            {
-                slanted.slantIgnoreFlag = slanted.TOP
-            }
-            else if (position == itemCount - 1)
-            {
-                slanted.slantIgnoreFlag = slanted.BOTTOM
-            }
-            else
-            {
-                slanted.slantIgnoreFlag = slanted.NONE
-            }
-        }
-
-
-        return holder.bind(items[position], listener)
+        ignoreFirstAndLastSlant(holder, position)
+        holder.bind(items[position], listener)
     }
 
 }
