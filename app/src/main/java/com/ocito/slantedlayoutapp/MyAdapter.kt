@@ -19,6 +19,24 @@ class MyAdapter(val items: List<Item>, val listener: (Item) -> Unit = {}) : Recy
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+
+        val slanted = (holder.itemView as SlantedLayout?)
+        slanted?.let {
+            if(position == 0)
+            {
+                slanted.slantIgnoreFlag = slanted.TOP
+            }
+            else if (position == itemCount - 1)
+            {
+                slanted.slantIgnoreFlag = slanted.BOTTOM
+            }
+            else
+            {
+                slanted.slantIgnoreFlag = slanted.NONE
+            }
+        }
+
+
         return holder.bind(items[position], listener)
     }
 
