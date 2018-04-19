@@ -56,10 +56,12 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     /**
      * constants used to match the slant ignore flags
      */
+    val NONE = 0
     val TOP = 1
     val LEFT = 2
     val RIGHT = 4
     val BOTTOM = 8
+    val ALL = 15
 
 
     enum class SlantDirection
