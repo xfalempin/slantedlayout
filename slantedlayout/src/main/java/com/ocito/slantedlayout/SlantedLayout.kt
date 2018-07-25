@@ -8,6 +8,9 @@ import android.graphics.Region
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.MotionEvent
+import kotlin.math.PI
+import kotlin.math.min
+import kotlin.math.tan
 
 /**
  * This Layout extends a constraint layout and only draws a parallelogram of the content
@@ -76,8 +79,41 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
      * for the parallelogram on :
      * top left & bottom right corner for positive values
      * top right & bottom left corner for negative values
+     *
+     * NB : slantedSize set value is used only when there is no valid slantedAngle (not set, or not in the range -90..+90)
+     * NB2 : when there is a slantedAngle set, the slantedSize getter will be calculated according to the angle and the component dimension/direction
      */
     var slantedSize: Float = context.resources.getDimension(R.dimen.slanted_layout_default_size_2)
+        get() {
+            //if we have a slantedAngle we give a slantedSize depending on the angle and the dimension/direction
+            if(slantedAngle > -90.0f && slantedAngle < 90.0f)
+            {
+                //depending on the direction we get the side that will be used to calculate the angle
+                val adjacent = when(slantDirection){
+                    SlantedLayout.SlantDirection.VERTICAL -> width
+                    SlantedLayout.SlantDirection.HORIZONTAL -> height
+                }
+
+                val opposed = when(slantDirection){
+                    SlantedLayout.SlantDirection.VERTICAL -> height
+                    SlantedLayout.SlantDirection.HORIZONTAL -> width
+                }
+
+                return min((adjacent*tan(slantedAngle*2* PI/360.0f)).toFloat(), opposed.toFloat())
+            }
+            return field
+        }
+        set(value) {
+            field = value
+            updateClipPath()
+        }
+
+    /**
+     * The slanted angle takes precedence over slantSize
+     * The valid range for slantedAngle is -90..+90
+     * Outside of these bounds it will be ignored
+     */
+    var slantedAngle: Float = 180.0f
         get() = field
         set(value) {
             field = value
@@ -114,6 +150,8 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
                     R.styleable.SlantedLayout_slant_size,
                     slantedSize)
 
+            slantedAngle = a.getFloat(R.styleable.SlantedLayout_slant_angle, slantedAngle)
+
             slantDirection = if(a.getInteger(R.styleable.SlantedLayout_slant_direction, 0) == 1) SlantDirection.HORIZONTAL else SlantDirection.VERTICAL
 
             slantIgnoreFlag = a.getInteger(R.styleable.SlantedLayout_slant_ignore, 0)
@@ -136,21 +174,19 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     private fun updateClipPath() {
         clipPath.reset()
 
-
-
         // we check first the sign of the slantedSize to know if we are on A|C or in B|D configurations
 
-        val slant1 : Float = if(slantedSize > 0) slantedSize else 0.0f
-        val slant2 : Float = if(slantedSize < 0) -slantedSize else 0.0f
+        val slant1: Float = if (slantedSize > 0) slantedSize else 0.0f
+        val slant2: Float = if (slantedSize < 0) -slantedSize else 0.0f
 
-        when(slantDirection)//we use the slantDirection to determine the exact case
+        when (slantDirection)//we use the slantDirection to determine the exact case
         {
             SlantDirection.VERTICAL -> {
                 //We have to check the slantIgnore top and bottom
-                val sl1 : Float = if((slantIgnoreFlag or TOP) == slantIgnoreFlag) 0.0f else slant1
-                val sl2 : Float = if((slantIgnoreFlag or BOTTOM) == slantIgnoreFlag) 0.0f else slant2
-                val sl3 : Float = if((slantIgnoreFlag or TOP) == slantIgnoreFlag) 0.0f else slant2
-                val sl4 : Float = if((slantIgnoreFlag or BOTTOM) == slantIgnoreFlag) 0.0f else slant1
+                val sl1: Float = if ((slantIgnoreFlag or TOP) == slantIgnoreFlag) 0.0f else slant1
+                val sl2: Float = if ((slantIgnoreFlag or BOTTOM) == slantIgnoreFlag) 0.0f else slant2
+                val sl3: Float = if ((slantIgnoreFlag or TOP) == slantIgnoreFlag) 0.0f else slant2
+                val sl4: Float = if ((slantIgnoreFlag or BOTTOM) == slantIgnoreFlag) 0.0f else slant1
 
                 clipPath.moveTo(paddingLeft.toFloat(), height.toFloat() - paddingBottom - sl2)
                 clipPath.lineTo(paddingLeft.toFloat(), paddingTop + sl1)
@@ -160,10 +196,10 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
 
             SlantDirection.HORIZONTAL -> {
                 //We have to check the slantIgnore left and right
-                val sl1 : Float = if((slantIgnoreFlag or LEFT) == slantIgnoreFlag) 0.0f else slant1
-                val sl2 : Float = if((slantIgnoreFlag or LEFT) == slantIgnoreFlag) 0.0f else slant2
-                val sl3 : Float = if((slantIgnoreFlag or RIGHT) == slantIgnoreFlag) 0.0f else slant2
-                val sl4 : Float = if((slantIgnoreFlag or RIGHT) == slantIgnoreFlag) 0.0f else slant1
+                val sl1: Float = if ((slantIgnoreFlag or LEFT) == slantIgnoreFlag) 0.0f else slant1
+                val sl2: Float = if ((slantIgnoreFlag or LEFT) == slantIgnoreFlag) 0.0f else slant2
+                val sl3: Float = if ((slantIgnoreFlag or RIGHT) == slantIgnoreFlag) 0.0f else slant2
+                val sl4: Float = if ((slantIgnoreFlag or RIGHT) == slantIgnoreFlag) 0.0f else slant1
 
                 clipPath.moveTo(paddingLeft.toFloat() + sl2, height.toFloat() - paddingBottom)
                 clipPath.lineTo(paddingLeft.toFloat() + sl1, paddingTop.toFloat())
@@ -171,7 +207,6 @@ class SlantedLayout @JvmOverloads constructor(context: Context, attrs: Attribute
                 clipPath.lineTo(width.toFloat() - paddingRight - sl4, height.toFloat() - paddingBottom)
             }
         }
-
 
 
         clipPath.close()
