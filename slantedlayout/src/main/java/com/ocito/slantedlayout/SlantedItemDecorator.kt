@@ -10,17 +10,17 @@ import kotlin.math.roundToInt
 /**
  * slantSize and margin must be in pixels
  */
-fun RecyclerView.addSlantItemDecoration(@RecyclerView.Orientation orientation:  Int, slantSize: Float, margin: Float) {
-    addItemDecoration(object : RecyclerView.ItemDecoration(){
-            override fun getItemOffsets(outRect: Rect?, view: View, parent: RecyclerView?, state: RecyclerView.State?) {
-                if(parent?.getChildAdapterPosition(view) != 0) {
-                    val px = (margin - slantSize).roundToInt()
-                    when(orientation)
-                    {
-                        LinearLayoutManager.VERTICAL -> outRect?.top = px
-                        LinearLayoutManager.HORIZONTAL -> outRect?.left = px
-                    }
+fun RecyclerView.addSlantItemDecoration(@RecyclerView.Orientation orientation:  Int, slantSize: Float, margin: Float) : RecyclerView.ItemDecoration {
+    return object : RecyclerView.ItemDecoration(){
+        override fun getItemOffsets(outRect: Rect?, view: View, parent: RecyclerView?, state: RecyclerView.State?) {
+            if(parent?.getChildAdapterPosition(view) != 0) {
+                val px = (margin - slantSize).roundToInt()
+                when(orientation)
+                {
+                    LinearLayoutManager.VERTICAL -> outRect?.top = px
+                    LinearLayoutManager.HORIZONTAL -> outRect?.left = px
                 }
             }
-        })
+        }
+    }.also { addItemDecoration(it) }
 }
