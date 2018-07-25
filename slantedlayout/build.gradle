@@ -8,7 +8,7 @@ apply plugin: 'maven-publish'
 
 def libraryGroupId = 'com.ocito.android'
 def libraryArtifactId = 'slantedlayout'
-def libraryVersion = '0.2'
+def libraryVersion = '0.2.1'
 
 
 
